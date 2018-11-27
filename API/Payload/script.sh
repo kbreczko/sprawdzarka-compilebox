@@ -42,7 +42,7 @@ exec  1> $"/usercode/logfile.txt"
 exec  2> $"/usercode/errors"
 #3>&1 4>&2 >
 
-START=$(date +%s.%2N)
+START=$(date +%s.%3N)
 #Branch 1
 if [ "$output" = "" ]; then
     $compiler /usercode/$file -< $"/usercode/inputFile" #| tee /usercode/output.txt
@@ -65,8 +65,8 @@ fi
 
 #head -100 /usercode/logfile.txt
 #touch /usercode/completed
-END=$(date +%s.%2N)
-runtime=$(echo "$END - $START" | bc)
+END=$(date +%s.%3N)
+runtime=$(echo "(($END - $START) * 1000) / 1" | bc)
 
 
 echo "*-COMPILEBOX::ENDOFOUTPUT-*" $runtime 
