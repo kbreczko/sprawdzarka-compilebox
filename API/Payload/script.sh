@@ -52,6 +52,7 @@ else
         $compiler /usercode/$file $addtionalArg #&> /usercode/errors.txt
 	#Branch 2a
 	if [ $? -eq 0 ];	then
+	    START=$(date +%s.%3N)
 		$output -< $"/usercode/inputFile" #| tee /usercode/output.txt    
 	#Branch 2b
 	else
