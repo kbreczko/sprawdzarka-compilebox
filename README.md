@@ -1,14 +1,12 @@
 # sprawdzarka-compile-box
 
 ### Wymagania:
-
 - Docker 18.06.1-ce
 - NodeJs v10.12.0
 - NPM 6.4.1
 
 ### Przygotowanie obrazu dla Docker:
-docker build -t 'virtual_machine' - < ./Setup/Dockerfile
-
+sudo docker build -t virtual_machine1 ./Setup/
 
 ### Przed uruchomieniem:
 npm install ./API/  
