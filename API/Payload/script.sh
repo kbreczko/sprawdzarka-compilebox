@@ -40,38 +40,28 @@ addtionalArg=$4
 
 exec  1> $"/usercode/logfile.txt"
 exec  2> $"/usercode/errors"
-#3>&1 4>&2 >
 
 START=$(date +%s.%3N)
 #Branch 1
 if [ "$output" = "" ]; then
-    $compiler /usercode/$file -< $"/usercode/inputFile" #| tee /usercode/output.txt
+    $compiler /usercode/$file -< $"/usercode/inputFile"
 #Branch 2
 else
-	#In case of compile errors, redirect them to a file
-        $compiler /usercode/$file $addtionalArg #&> /usercode/errors.txt
+    $compiler /usercode/$file $addtionalArg
 	#Branch 2a
 	if [ $? -eq 0 ];	then
 	    START=$(date +%s.%3N)
-		$output -< $"/usercode/inputFile" #| tee /usercode/output.txt    
+		$output -< $"/usercode/inputFile"
 	#Branch 2b
 	else
 	    echo "Compilation Failed"
-	    #if compilation fails, display the output file	
-	    #cat /usercode/errors.txt
 	fi
 fi
 
-#exec 1>&3 2>&4
-
-#head -100 /usercode/logfile.txt
-#touch /usercode/completed
 END=$(date +%s.%3N)
 runtime=$(echo "(($END - $START) * 1000) / 1" | bc)
 
-
-echo "*-COMPILEBOX::ENDOFOUTPUT-*" $runtime 
-
+echo "*-COMPILEBOX::ENDOFOUTPUT-*" $runtime
 
 mv /usercode/logfile.txt /usercode/completed
 
