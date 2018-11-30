@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 
-
 ######################################################################################
 #	This script is specifically made to handle the compilation of java
 #	The idea is to cater with the difference of class name(s) inside file
@@ -27,18 +26,11 @@
 #
 #######################################################################################
 
-
-#The folder which we mount on docker is named the usercode.
-#Move into the directory and execute the loop
 cd /usercode/
-
-
 
 for classfile in *.class; do
     classname=${classfile%.*}
-    #echo $classname
 
-    #Execute fgrep with -q option to not display anything on stdout when the match is found
     if javap -public $classname | fgrep -q 'public static void main(java.lang.String[])'; then
         java $classname "$@"
         exit 0;
