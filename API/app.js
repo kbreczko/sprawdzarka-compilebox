@@ -16,13 +16,6 @@ var server = http.createServer(app);
 var port = 8080;
 
 
-var ExpressBrute = require('express-brute');
-var store = new ExpressBrute.MemoryStore(); // stores state locally, don't use this in production
-var bruteforce = new ExpressBrute(store, {
-  freeRetries: 50,
-  lifetime: 3600
-});
-
 app.use(express.static(__dirname));
 app.use(bodyParser());
 
@@ -40,7 +33,7 @@ function random(size) {
 }
 
 
-app.post('/compile', bruteforce.prevent, function (req, res) {
+app.post('/compile', function (req, res) {
 
   var language = req.body.language;
   var code = req.body.code;
