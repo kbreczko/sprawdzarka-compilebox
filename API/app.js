@@ -1,11 +1,3 @@
-/*
-        *File: app.js
-        *Author: Asad Memon / Osman Ali Mian
-        *Last Modified: 5th June 2014
-        *Revised on: 30th June 2014 (Introduced Express-Brute for Bruteforce protection)
-*/
-
-
 var express = require('express');
 var http = require('http');
 var arr = require('./compilers');
@@ -16,7 +8,6 @@ var server = http.createServer(app);
 var port = 8080;
 
 
-app.use(express.static(__dirname));
 app.use(bodyParser());
 
 app.all('*', function (req, res, next) {
@@ -28,7 +19,6 @@ app.all('*', function (req, res, next) {
 });
 
 function random(size) {
-  //returns a crypto-safe random
   return require("crypto").randomBytes(size).toString('hex');
 }
 
@@ -39,22 +29,20 @@ app.post('/compile', function (req, res) {
   var code = req.body.code;
   var stdin = req.body.input;
 
-  var folder = 'temp/' + random(10); //folder in which the temporary folder will be saved
-  var path = __dirname + "/"; //current working path
-  var vm_name = 'virtual_machine'; //name of virtual machine that we want to execute
-  var timeout_value = 60;//Timeout Value, In Seconds
+  var index = random(10);
+  var folder = 'temp/' + index;
+  var host_path = process.env.TMPPATH + "/" + index;
+  var path = __dirname + "/";
+  var vm_name = 'kamilbreczko/sprawdzarka:virtual_machine';
+  var timeout_value = 60;
 
-  //details of this are present in DockerSandbox.js
-  var sandboxType = new sandBox(timeout_value, path, folder, vm_name, arr.compilerArray[language][0], arr.compilerArray[language][1], code, arr.compilerArray[language][2], arr.compilerArray[language][3], arr.compilerArray[language][4], stdin);
+  var sandboxType = new sandBox(timeout_value, path, folder, vm_name, arr.compilerArray[language][0], arr.compilerArray[language][1], code, arr.compilerArray[language][2], arr.compilerArray[language][3], arr.compilerArray[language][4], stdin, host_path);
 
-
-  //data will contain the output of the compiled/interpreted code
-  //the result maybe normal program output, list of error messages or a Timeout error
   sandboxType.run(function (data, exec_time, err) {
     res.send({output: data, language: language, code: code, errors: err, time: exec_time});
   });
 
 });
 
-console.log("Listening at " + port)
+console.log("Listening at " + port);
 server.listen(port);

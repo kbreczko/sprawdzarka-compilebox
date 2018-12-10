@@ -14,7 +14,7 @@
 compiler=$1
 file=$2
 output=$3
-addtionalArg=$4
+additionalArgument=$4
 
 
 ########################################################################
@@ -23,7 +23,7 @@ addtionalArg=$4
 #	- The output of the stream is then sent to respective files
 #	
 #	
-#	- if third arguemtn is empty Branch 1 is followed. An interpretor was called
+#	- if third argument is empty Branch 1 is followed. An interpreter was called
 #	- else Branch2 is followed, a compiler was invoked
 #	- In Branch2. We first check if the compile operation was a success (code returned 0)
 #	
@@ -47,7 +47,7 @@ if [ "$output" = "" ]; then
     $compiler /usercode/$file -< $"/usercode/inputFile"
 #Branch 2
 else
-    $compiler /usercode/$file $addtionalArg
+    $compiler /usercode/$file $additionalArgument
 	#Branch 2a
 	if [ $? -eq 0 ];	then
 	    START=$(date +%s.%3N)
