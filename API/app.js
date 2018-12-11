@@ -31,8 +31,8 @@ app.post('/compile', function (req, res) {
 
   var index = random(10);
   var folder = 'temp/' + index;
-  var host_path = process.env.TMPPATH + "/" + index;
   var path = __dirname + "/";
+  var host_path = process.env.TMP_PATH ? process.env.TMP_PATH + "/" + index : path + folder;
   var vm_name = 'kamilbreczko/sprawdzarka:virtual_machine';
   var timeout_value = 60;
 

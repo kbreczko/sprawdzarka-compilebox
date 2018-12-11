@@ -16,4 +16,4 @@ RUN chmod 777 /usr/local/etc/API/DockerTimeout.sh
 RUN chmod 777 /usr/local/etc/API/Payload/script.sh
 RUN chmod 777 /usr/local/etc/API/Payload/javaRunner.sh
 
-CMD node /usr/local/etc/API/app.js
+ENTRYPOINT node /usr/local/etc/API/app.js
