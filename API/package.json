@@ -6,7 +6,8 @@
     "express": "4.*",
     "body-parser": "*",
     "express-brute": "*",
-    "exports": "*"
+    "exports": "*",
+    "util": "*"
   },
   "author": "Osman Ali",
   "license": "MIT"

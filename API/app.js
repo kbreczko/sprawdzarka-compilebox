@@ -8,7 +8,11 @@ var server = http.createServer(app);
 var port = 8080;
 
 
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
+app.use(bodyParser.json());
 
 app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -39,6 +43,12 @@ app.post('/compile', function (req, res) {
   var sandboxType = new sandBox(timeout_value, path, folder, vm_name, arr.compilerArray[language][0], arr.compilerArray[language][1], code, arr.compilerArray[language][2], arr.compilerArray[language][3], arr.compilerArray[language][4], stdin, host_path);
 
   sandboxType.run(function (data, exec_time, err) {
+    console.log(`------------------`);
+    console.log(`Time: ${exec_time}`);
+    console.log(`Main File: \n ${data}`);
+    console.log(`Error file \n ${err}`);
+    console.log(`------------------`);
+
     res.send({output: data, language: language, code: code, errors: err, time: exec_time});
   });
 

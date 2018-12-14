@@ -59,9 +59,10 @@ else
 fi
 
 END=$(date +%s.%3N)
-runtime=$(echo "(($END - $START) * 1000) / 1" | bc)
 
-echo "*-COMPILEBOX::ENDOFOUTPUT-*" $runtime
+exec  1> $"/usercode/time"
+runtime=$(echo "(($END - $START) * 1000) / 1" | bc)
+echo $runtime
 
 mv /usercode/logfile.txt /usercode/completed
 
