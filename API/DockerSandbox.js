@@ -59,9 +59,9 @@ DockerSandbox.prototype.prepare = function (success) {
   var sandbox = this;
 
   async function prepareEnvironment() {
-    await exec(`mkdir ${this.path}${this.folder}`);
-    await exec(`cp ${this.path}/Payload/* ${this.path}${this.folder}`);
-    await exec(`chmod 777 ${this.path}${this.folder}`);
+    await exec(`mkdir ${sandbox.path}${sandbox.folder}`);
+    await exec(`cp ${sandbox.path}/Payload/* ${sandbox.path}${sandbox.folder}`);
+    await exec(`chmod 777 ${sandbox.path}${sandbox.folder}`);
     await fs.writeFile(`${sandbox.path}${sandbox.folder}/${sandbox.file_name}`, sandbox.code);
     console.log(sandbox.langName + " file was saved!");
     exec(`chmod 777 '${sandbox.path}${sandbox.folder}/${sandbox.file_name}'`);
@@ -81,7 +81,6 @@ DockerSandbox.prototype.prepare = function (success) {
  *
  * @param {Function pointer} success ?????
  */
-
 DockerSandbox.prototype.execute = function (success) {
   var exec = require('child_process').exec;
   var fs = require('fs');

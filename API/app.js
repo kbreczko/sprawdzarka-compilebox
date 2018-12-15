@@ -7,6 +7,9 @@ var app = express();
 var server = http.createServer(app);
 var port = 8080;
 
+var max_containers_count = 1;
+var containers_count = 0;
+
 
 app.use(bodyParser.urlencoded({
   extended: true
@@ -42,16 +45,27 @@ app.post('/compile', function (req, res) {
 
   var sandboxType = new sandBox(timeout_value, path, folder, vm_name, arr.compilerArray[language][0], arr.compilerArray[language][1], code, arr.compilerArray[language][2], arr.compilerArray[language][3], arr.compilerArray[language][4], stdin, host_path);
 
-  sandboxType.run(function (data, exec_time, err) {
-    console.log(`------------------`);
-    console.log(`Time: ${exec_time}`);
-    console.log(`Main File: \n ${data}`);
-    console.log(`Error file \n ${err}`);
-    console.log(`------------------`);
+  (function continueExec() {
 
-    res.send({output: data, language: language, code: code, errors: err, time: exec_time});
-  });
+    if(containers_count > max_containers_count){
+      setTimeout(continueExec, 1000);
+      return;
+    }
 
+    containers_count = containers_count + 1;
+
+    sandboxType.run(function (data, exec_time, err) {
+      containers_count = containers_count - 1;
+
+      console.log(`------------------`);
+      console.log(`Time: ${exec_time}`);
+      console.log(`Main File: \n ${data}`);
+      console.log(`Error file \n ${err}`);
+      console.log(`------------------`);
+
+      res.send({output: data, language: language, code: code, errors: err, time: exec_time});
+    });
+  })();
 });
 
 console.log("Listening at " + port);
