@@ -54,7 +54,8 @@ DockerSandbox.prototype.run = function (success) {
  * @param {Function pointer} success ?????
  */
 DockerSandbox.prototype.prepare = function (success) {
-  var exec = require('child_process').exec;
+  var util = require('util');
+  var exec = util.promisify(require('child_process').exec);
   var fs = require('fs').promises;
   var sandbox = this;
 
@@ -64,7 +65,7 @@ DockerSandbox.prototype.prepare = function (success) {
     await exec(`chmod 777 ${sandbox.path}${sandbox.folder}`);
     await fs.writeFile(`${sandbox.path}${sandbox.folder}/${sandbox.file_name}`, sandbox.code);
     console.log(sandbox.langName + " file was saved!");
-    exec(`chmod 777 '${sandbox.path}${sandbox.folder}/${sandbox.file_name}'`);
+    await exec(`chmod 777 '${sandbox.path}${sandbox.folder}/${sandbox.file_name}'`);
     await fs.writeFile(`${sandbox.path}${sandbox.folder}/inputFile`, sandbox.stdin_data);
     console.log("Input file was saved!");
     success();
@@ -83,9 +84,8 @@ DockerSandbox.prototype.prepare = function (success) {
  */
 DockerSandbox.prototype.execute = function (success) {
   var exec = require('child_process').exec;
-  var fs = require('fs');
   var util = require('util');
-  var readFileAsync = util.promisify(fs.readFile);
+  var readFileAsync = util.promisify(require('fs').readFile);
 
   var counter = 0;
   var sandbox = this;
