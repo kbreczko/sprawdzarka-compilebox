@@ -63,7 +63,7 @@ app.post('/compile', function (req, res) {
       console.log(`Error file \n ${err}`);
       console.log(`------------------`);
 
-      res.send({output: data, language: language, code: code, errors: err, time: exec_time});
+      res.send({output: data, language: language, code: code, error: err, time: exec_time});
     });
   })();
 });
