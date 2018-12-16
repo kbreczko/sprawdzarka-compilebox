@@ -30,7 +30,7 @@ function random(size) {
 }
 
 
-app.post('/compile', function (req, res) {
+app.post('/compilation', function (req, res) {
 
   var language = req.body.language;
   var code = req.body.code;
