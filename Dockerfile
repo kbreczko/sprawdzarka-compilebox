@@ -1,19 +1,13 @@
-FROM ubuntu:latest
+FROM node:11.4.0-slim
 MAINTAINER Kamil Breczko, Mateusz Pater
 
-RUN rm -rf /var/lib/apt/lists/*
-RUN apt-get update
+RUN curl -sSL https://get.docker.com/ | sh
 
-RUN apt-get install -y docker.io
-RUN apt-get install -y nodejs
-RUN apt-get install -y npm
+COPY ./API /usr/local/src/API
+COPY ./LICENSE /usr/local/src/LICENSE
 
-COPY ./API /usr/local/etc/API
-COPY ./LICENSE /usr/local/etc/LICENSE
+RUN npm install /usr/local/src/API/
+RUN chmod 777 /usr/local/src/API/Payload/script.sh
+RUN chmod 777 /usr/local/src/API/Payload/javaRunner.sh
 
-RUN npm install /usr/local/etc/API/
-RUN chmod 777 /usr/local/etc/API/DockerTimeout.sh
-RUN chmod 777 /usr/local/etc/API/Payload/script.sh
-RUN chmod 777 /usr/local/etc/API/Payload/javaRunner.sh
-
-ENTRYPOINT node /usr/local/etc/API/app.js
+ENTRYPOINT node /usr/local/src/API/app.js
