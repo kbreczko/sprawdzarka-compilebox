@@ -44,8 +44,8 @@ Technologie:
 `docker build -t kamilbreczko/sprawdzarka:compilebox .`  
 
 ### Przed uruchomieniem:
-mkdir -p /usr/local/etc/sprawdzarka/mysql
-mkdir -p /usr/local/etc/sprawdzarka/tmp
+mkdir -p /usr/local/etc/sprawdzarka/mysql  
+mkdir -p /usr/local/etc/sprawdzarka/tmp  
 
 ### Uruchomienie:
 `docker run -it -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/local/etc/sprawdzarka/tmp:/usr/local/src/API/temp -e TMP_PATH="/usr/local/etc/sprawdzarka/tmp" --name compilebox kamilbreczko/sprawdzarka:compilebox`
