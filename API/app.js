@@ -7,8 +7,8 @@ var app = express();
 var server = http.createServer(app);
 var port = 8080;
 
-var max_containers_count = 1;
-var containers_count = 0;
+var MAX_CONTAINERS_COUNT = 1;
+var containersCount = 0;
 
 
 app.use(bodyParser.urlencoded({
@@ -39,31 +39,31 @@ app.post('/compile', function (req, res) {
   var index = random(10);
   var folder = 'temp/' + index;
   var path = __dirname + "/";
-  var host_path = process.env.TMP_PATH ? process.env.TMP_PATH + "/" + index : path + folder;
-  var vm_name = 'kamilbreczko/sprawdzarka:virtual_machine';
-  var timeout_value = 60;
+  var hostPath = process.env.TMP_PATH ? process.env.TMP_PATH + "/" + index : path + folder;
+  var vmName = 'kamilbreczko/sprawdzarka:virtual_machine';
+  var timeout = 60;
 
-  var sandboxType = new sandBox(timeout_value, path, folder, vm_name, arr.compilerArray[language][0], arr.compilerArray[language][1], code, arr.compilerArray[language][2], arr.compilerArray[language][3], arr.compilerArray[language][4], stdin, host_path);
+  var sandboxType = new sandBox(timeout, path, folder, vmName, arr.compilerArray[language][0], arr.compilerArray[language][1], code, arr.compilerArray[language][2], arr.compilerArray[language][3], arr.compilerArray[language][4], stdin, hostPath);
 
   (function continueExec() {
 
-    if(containers_count > max_containers_count){
+    if(containersCount >= MAX_CONTAINERS_COUNT){
       setTimeout(continueExec, 1000);
       return;
     }
 
-    containers_count = containers_count + 1;
+    containersCount = containersCount + 1;
 
-    sandboxType.run(function (data, exec_time, err) {
-      containers_count = containers_count - 1;
+    sandboxType.run(function (output, time, error) {
+      containersCount = containersCount - 1;
 
       console.log(`------------------`);
-      console.log(`Time: ${exec_time}`);
-      console.log(`Main File: \n ${data}`);
-      console.log(`Error file \n ${err}`);
+      console.log(`Time: ${time}`);
+      console.log(`Main File: \n ${output}`);
+      console.log(`Error file \n ${error}`);
       console.log(`------------------`);
 
-      res.send({output: data, language: language, code: code, error: err, time: exec_time});
+      res.send({output: output, language: language, code: code, error: error, time: time});
     });
   })();
 });

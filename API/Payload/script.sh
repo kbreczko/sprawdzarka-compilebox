@@ -38,8 +38,8 @@ additionalArgument=$4
 #	
 ########################################################################
 
-exec  1> $"/usercode/logfile.txt"
-exec  2> $"/usercode/errors"
+exec  1> $"/usercode/logfile"
+exec  2> $"/usercode/error"
 
 START=$(date +%s.%3N)
 #Branch 1
@@ -64,5 +64,5 @@ exec  1> $"/usercode/time"
 runtime=$(echo "(($END - $START) * 1000) / 1" | bc)
 echo $runtime
 
-mv /usercode/logfile.txt /usercode/completed
+mv /usercode/logfile /usercode/completed
 
