@@ -121,7 +121,7 @@ DockerSandbox.prototype.execute = function (success) {
     var time = -1;
     var output = await fs.readFile(`${sandbox.path}${sandbox.folder}/logfile`, 'utf8');
     var error = await fs.readFile(`${sandbox.path}${sandbox.folder}/error`, 'utf8');
-    success(output, time, `${error} \n Execution Timed Out`);
+    success(output, time, error);
   };
 
   var stopInterval = function () {

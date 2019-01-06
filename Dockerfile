@@ -1,7 +1,16 @@
-FROM node:11.4.0-slim
+FROM ubuntu:latest
 MAINTAINER Kamil Breczko, Mateusz Pater
 
-RUN curl -sSL https://get.docker.com/ | sh
+RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get update
+
+RUN apt-get install -y docker.io
+RUN apt-get install -y npm
+RUN apt-get update -yq \
+    && apt-get install curl gnupg -yq \
+    && curl -sL https://deb.nodesource.com/setup_10.x | bash \
+    && apt-get install nodejs -yq
+
 
 COPY ./API /usr/local/src/API
 COPY ./LICENSE /usr/local/src/LICENSE
