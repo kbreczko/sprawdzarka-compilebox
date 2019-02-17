@@ -54,15 +54,16 @@ DockerSandbox.prototype.run = function (success) {
  * @param {Function pointer} success ?????
  */
 DockerSandbox.prototype.prepare = function (success) {
-  var util = require('util');
-  var exec = util.promisify(require('child_process').exec);
-  var fs = require('fs').promises;
-  var sandbox = this;
+  let util = require('util');
+  let exec = util.promisify(require('child_process').exec);
+  let fs = require('fs').promises;
+  let sandbox = this;
 
   async function prepareEnvironment() {
     await exec(`mkdir ${sandbox.path}${sandbox.folder}`);
     await exec(`cp ${sandbox.path}/Payload/* ${sandbox.path}${sandbox.folder}`);
     await exec(`chmod 777 ${sandbox.path}${sandbox.folder}`);
+    debugger;
     await fs.writeFile(`${sandbox.path}${sandbox.folder}/${sandbox.fileName}`, sandbox.code);
     console.log(sandbox.languageName + " file was saved!");
     await exec(`chmod 777 '${sandbox.path}${sandbox.folder}/${sandbox.fileName}'`);

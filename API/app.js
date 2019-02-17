@@ -1,14 +1,14 @@
-var express = require('express');
-var http = require('http');
-var arr = require('./compilers');
-var sandBox = require('./DockerSandbox');
-var bodyParser = require('body-parser');
-var app = express();
-var server = http.createServer(app);
-var port = 8080;
+let express = require('express');
+let http = require('http');
+let arr = require('./compilers');
+let sandBox = require('./DockerSandbox');
+const bodyParser = require('body-parser');
+let app = express();
+let server = http.createServer(app);
+const port = 8080;
 
-var MAX_CONTAINERS_COUNT = 1;
-var containersCount = 0;
+const MAX_CONTAINERS_COUNT = 1;
+let containersCount = 0;
 
 
 app.use(bodyParser.urlencoded({
@@ -29,43 +29,66 @@ function random(size) {
   return require("crypto").randomBytes(size).toString('hex');
 }
 
+var amqp = require('amqplib/callback_api');
 
-app.post('/compilation', function (req, res) {
+amqp.connect('amqp://localhost', function(err, conn) {
+  conn.createChannel(function(err, ch) {
+    const ex = 'tut.topic';
+    ch.assertExchange(ex, 'topic', {durable: true});
+    ch.assertQueue('test', {exclusive: false}, function(err, q) {
+      console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
+      ch.bindQueue(q.queue, ex, '*.compile');
 
-  var language = req.body.language;
-  var code = req.body.code;
-  var stdin = req.body.input;
+      ch.consume(q.queue, function(msg) {
+        debugger;
+        console.log(" [x] %s: took from queue '%s'", msg.fields.routingKey, msg.content);
 
-  var index = random(10);
-  var folder = 'temp/' + index;
-  var path = __dirname + "/";
-  var hostPath = process.env.TMP_PATH ? process.env.TMP_PATH + "/" + index : path + folder;
-  var vmName = 'kamilbreczko/sprawdzarka:virtual_machine';
-  var timeout = 60;
+        let language = JSON.parse(msg.content).language;
+        let code = JSON.parse(msg.content).code;
+        let stdin = JSON.parse(msg.content).input;
 
-  var sandboxType = new sandBox(timeout, path, folder, vmName, arr.compilerArray[language][0], arr.compilerArray[language][1], code, arr.compilerArray[language][2], arr.compilerArray[language][3], arr.compilerArray[language][4], stdin, hostPath);
+        let index = random(10);
+        let folder = 'temp/' + index;
+        let path = __dirname + "/";
+        let hostPath = process.env.TMP_PATH ? process.env.TMP_PATH + "/" + index : path + folder;
+        let vmName = 'kamilbreczko/sprawdzarka:virtual_machine';
+        let timeout = 60;
 
-  (function continueExec() {
+        let sandboxType = new sandBox(timeout, path, folder, vmName, arr.compilerArray[language][0], arr.compilerArray[language][1], code, arr.compilerArray[language][2], arr.compilerArray[language][3], arr.compilerArray[language][4], stdin, hostPath);
 
-    if(containersCount >= MAX_CONTAINERS_COUNT){
-      setTimeout(continueExec, 1000);
-      return;
-    }
+        (function continueExec() {
 
-    containersCount = containersCount + 1;
+          if(containersCount >= MAX_CONTAINERS_COUNT){
+            setTimeout(continueExec, 1000);
+            return;
+          }
 
-    sandboxType.run(function (output, time, error) {
-      containersCount = containersCount - 1;
+          containersCount = containersCount + 1;
 
-      console.log(`------------------`);
-      console.log(`Time: ${time}`);
-      console.log(`Main File: \n ${output}`);
-      console.log(`Error file \n ${error}`);
-      console.log(`------------------`);
+          sandboxType.run(function (output, time, error) {
+            containersCount = containersCount - 1;
 
-      res.send({output: output, language: language, code: code, error: error, time: time});
+            console.log(`------------------`);
+            console.log(`Time: ${time}`);
+            console.log(`Main File: \n ${output}`);
+            console.log(`Error file \n ${error}`);
+            console.log(`------------------`);
+
+            const routingKey = msg.fields.routingKey.replace('compile', 'result');
+            const result = JSON.stringify({output: output, language: language, code: code, error: error, time: time});
+
+            console.log('Publish on ' + routingKey + ' result: ' + result);
+            ch.publish(ex, routingKey, Buffer.from(result));
+
+          });
+        })();
+
+
+
+
+      }, {noAck: true});
     });
-  })();
+  });
 });
 
 console.log("Listening at " + port);
