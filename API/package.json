@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "app.js",
   "dependencies": {
-    "express": "4.*",
+    "amqplib": "^0.5.3",
     "body-parser": "*",
-    "express-brute": "*",
     "exports": "*",
+    "express": "4.*",
+    "express-brute": "*",
     "util": "*"
   },
   "author": "Osman Ali",
