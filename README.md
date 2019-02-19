@@ -8,10 +8,10 @@ Cechy/ograniczenia:
 - pomiar czasu uruchomionego programu w ms
 
 Model przyjmowany:  
-`{code: "String", input: "String", language: Integer}`  
+`{code: "String", input: "String", language: Integer, id: Long, testId: Long}`  
 
 Model zwracany:  
-`{code: "String", input: "String", language: Integer, output: "String", time: Long, error:"String"}`  
+`{code: "String", input: "String", language: Integer, output: "String", time: Long, error:"String", solutionId: Long, testId: Long}`  
 
 Technologie:
 - express-js
